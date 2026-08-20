@@ -84,4 +84,16 @@ git push                         # upload to GitHub
 
 ---
 
+## 7. Debugging playbook (when a test fails, do THIS before asking anyone)
+
+1. **Reproduce it in UI mode:** `npx playwright test --ui` — opens the visual runner.
+2. **Click the red step** in the Actions list — that's exactly where it broke.
+3. **Read the error (the *what*)** and **look at the snapshot (the *why*)** — does the page actually match what you expected?
+4. **Read the timing:** a step that took ~5 seconds and then failed almost always means "element not found."
+5. **One theory, one change, save, re-run.** Change one thing at a time so you know what fixed it.
+
+Golden rule of debugging: **look before you guess.** The snapshot shows you the truth — you rarely need to guess at all.
+
+---
+
 *Rule to live by: if you can't explain every line of your test, you don't truly know it yet. Understand before memorising.*

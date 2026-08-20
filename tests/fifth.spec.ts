@@ -12,6 +12,6 @@ test('can add two to-do items', async ({ page }) => {
   await newTodo.press('Enter');          // submit it
 
   await expect(page.getByText('Buy milk')).toBeVisible();        // first one showing?
-  await expect(page.getByText('Walk the dog')).toBeVisible();    // second one showing?
+  await expect(page.getByText('Walk the dog')).toBeVisible();   // second one showing?
   await expect(page.locator('.todo-list li')).toHaveCount(2);      // exactly 2 items in the list?
 });

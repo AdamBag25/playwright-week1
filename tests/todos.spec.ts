@@ -39,5 +39,13 @@ test.describe('TodoMVC', () => {
     await page.getByRole('link', { name: 'Active' }).click();          // 5. click Active filter (Day 3)
     await expect(page.getByText('Buy milk')).not.toBeVisible();        // 6. it's gone → green
   });
-
+   test('can complete a specific to-do', async ({ page}) => {
+    const newTodo = page.getByPlaceholder('What needs to be done?');
+    await newTodo.fill('Buy milk');
+    await newTodo.press('Enter');
+    await newTodo.fill('Walk the dog');
+    await newTodo.press('Enter');
+    await page.locator('.todo-list li').filter({ hasText: 'Walk the dog' }).getByRole('checkbox').check();
+    await expect(page.locator('.todo-list li').filter({ hasText: 'Walk the dog' }).getByRole('checkbox')).toBeChecked();
+   });
 });

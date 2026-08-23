@@ -30,10 +30,14 @@ test.describe('TodoMVC', () => {
     await newTodo.press('Enter');
      await page.locator('.todo-list').getByRole('checkbox').check();
     await expect(page.locator('.todo-list').getByRole('checkbox')).toBeChecked();
-
-    // add a to-do (fill + press), then...
-    // check the checkbox
-    // assert it's checked
+  });
+    test('completed to-dos are hidden under the Active filter', async ({ page }) => {
+    const newTodo = page.getByPlaceholder('What needs to be done?');   // 1. the input (Day 5)
+    await newTodo.fill('Buy milk');                                    // 2. type it (Day 4)
+    await newTodo.press('Enter');                                      // 3. add it (Day 4)
+    await page.locator('.todo-list').getByRole('checkbox').check();    // 4. tick it done (Day 8)
+    await page.getByRole('link', { name: 'Active' }).click();          // 5. click Active filter (Day 3)
+    await expect(page.getByText('Buy milk')).not.toBeVisible();        // 6. it's gone → green
   });
 
 });

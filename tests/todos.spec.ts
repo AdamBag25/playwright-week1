@@ -24,5 +24,16 @@ test.describe('TodoMVC', () => {
     await expect(page.locator('.todo-list li')).toHaveCount(2);
     // TODO: add two to-dos, then assert the list count is 2
   });
+    test('can mark a to-do as complete', async ({ page }) => {
+    const newTodo = page.getByPlaceholder('What needs to be done?');
+    await newTodo.fill('buy milk');
+    await newTodo.press('Enter');
+     await page.locator('.todo-list').getByRole('checkbox').check();
+    await expect(page.locator('.todo-list').getByRole('checkbox')).toBeChecked();
+
+    // add a to-do (fill + press), then...
+    // check the checkbox
+    // assert it's checked
+  });
 
 });

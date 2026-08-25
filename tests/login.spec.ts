@@ -6,11 +6,22 @@ await page.getByLabel('username').fill('tomsmith');
 await page.getByLabel('password').fill('SuperSecretPassword!');
 await page.getByRole('button', { name: 'Login' }).click();
 await expect(page.getByText('you logged into a secure area!')).toBeVisible();
-
-
   // goto the login page
   // fill Username (getByLabel)
   // fill Password (getByLabel)
   // click the Login button
   // assert the success message is visible
 });
+[]
+test('user cannot log in with invalid details', async ({ page }) => {
+await page.goto('https://the-internet.herokuapp.com/login');
+await page.getByLabel('username').fill('wronguser');
+await page.getByLabel('password').fill('wrongpassword');
+await page.getByRole('button', { name: 'Login' }).click();
+await expect(page.getByText('Your username is invalid!')).toBeVisible();
+  // goto the login page
+  // fill Username (getByLabel)
+  // fill Password (getByLabel)
+  // click the Login button
+  // assert the error message is visible 
+})

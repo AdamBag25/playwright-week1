@@ -1,27 +1,16 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from './LoginPage';
 
 test('user can log in with valid details', async ({ page }) => {
-await page.goto('https://the-internet.herokuapp.com/login');
-await page.getByLabel('username').fill('tomsmith');
-await page.getByLabel('password').fill('SuperSecretPassword!');
-await page.getByRole('button', { name: 'Login' }).click();
-await expect(page.getByText('you logged into a secure area!')).toBeVisible();
-  // goto the login page
-  // fill Username (getByLabel)
-  // fill Password (getByLabel)
-  // click the Login button
-  // assert the success message is visible
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.login('tomsmith', 'SuperSecretPassword!');
+  await expect(page.getByText('You logged into a secure area!')).toBeVisible();
 });
-[]
-test('user cannot log in with invalid details', async ({ page }) => {
-await page.goto('https://the-internet.herokuapp.com/login');
-await page.getByLabel('username').fill('wronguser');
-await page.getByLabel('password').fill('wrongpassword');
-await page.getByRole('button', { name: 'Login' }).click();
-await expect(page.getByText('Your username is invalid!')).toBeVisible();
-  // goto the login page
-  // fill Username (getByLabel)
-  // fill Password (getByLabel)
-  // click the Login button
-  // assert the error message is visible 
-})
+
+test('shows an error with invalid details', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.login('wronguser', 'wrongpass');
+  await expect(page.getByText('Your username is invalid!')).toBeVisible();
+});

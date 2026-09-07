@@ -3,6 +3,9 @@ import { expect } from '@playwright/test';
 export class LoginPage {
   constructor(page) {
     this.page = page;
+    this.usernameInput = page.getByLabel('Username');
+    this.passwordInput = page.getByLabel('Password');
+    this.loginButton = page.getByRole('button', { name: 'Login' });
   }
 
   async goto() {
@@ -10,8 +13,8 @@ export class LoginPage {
   }
 
   async login(username, password) {
-    await this.page.getByLabel('Username').fill(username);
-    await this.page.getByLabel('Password').fill(password);
-    await this.page.getByRole('button', { name: 'Login' }).click();
+    await this.usernameInput.fill(username);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
   }
-};
+}

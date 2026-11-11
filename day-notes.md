@@ -147,4 +147,45 @@ test('can add a to-do with variables', async ({ page }) => {
 
 ---
 
+## Day 5, Part 2: Counting, and "too broad" locators
+
+**Big idea:** Check **how many** of something there are with `toHaveCount(n)`. The number has **no quotes**.
+
+```typescript
+test('can add multiple to-dos', async ({ page }) => {
+  await page.goto('https://demo.playwright.dev/todomvc');
+  const newTodo = page.getByPlaceholder('what needs to be done?');
+  await newTodo.fill('buy bread');
+  await newTodo.press('Enter');
+  await newTodo.fill('buy eggs');
+  await newTodo.press('Enter');
+  await expect(page.locator('.todo-list li')).toHaveCount(2);
+});
+```
+
+**What went wrong first:**
+
+| Locator | Received | Meaning |
+|---|---|---|
+| `getByRole('listitem')` | **5** | **Too broad:** it also counted the All / Active / Completed filter buttons |
+| `locator('listitem li')` | **0** | **Wrong address:** nothing on the page is called that |
+| `locator('.todo-list li')` | **2** ✅ | **Right address:** only the to-dos |
+
+**Reading `page.locator('.todo-list li')`:**
+```
+┌── .todo-list ──────┐      .todo-list = the box holding the to-dos (the dot means "box with this name")
+│  li  buy bread     │  ←   li = a list item inside it (the space means "inside")
+│  li  buy eggs      │
+└────────────────────┘
+All | Active | Completed   ← outside the box, not counted
+```
+
+**The rule:**
+- **Received more than expected?** The locator is **too broad**, catching things I didn't mean. **Narrow it** to the box I actually mean.
+- **Received 0?** The address is wrong. Check the name and the dot.
+
+**Two tests in one file:** each test gets its own `test(...)` block. 2 tests × 3 browsers = **6 results**.
+
+---
+
 *My rule: if I can't explain every line, I don't truly know it.*

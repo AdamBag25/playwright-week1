@@ -188,4 +188,40 @@ All | Active | Completed   ← outside the box, not counted
 
 ---
 
+## Day 6: Debugging in UI mode
+
+**Big idea:** Reading the terminal error is like reading a **match report**. UI mode is like watching the **replay**. I can watch my test run and **time-travel** to any step.
+
+```bash
+npx playwright test --ui
+```
+
+```
+┌──────────────┬───────────────────────────────────────┐
+│ TESTS (left) │  BIG PICTURE: a snapshot of the page  │
+│              │  at the step I clicked                │
+│ ▸ day05...   │                                       │
+│   ✅ / ❌    ├───────────────────────────────────────┤
+│              │ ACTIONS: goto, fill, press, expect…   │
+│              │ ERRORS tab: the same error as terminal│
+└──────────────┴───────────────────────────────────────┘
+```
+
+**How to use it:**
+1. Open the file on the left and click **▶** next to a test.
+2. Click each step in **Actions**, and the big picture shows the page **at that moment**.
+3. If it's red, click the **red step** and read the **Errors** tab.
+4. Fix it in VS Code, **save**, then click **▶** again.
+5. Close the UI mode window when done. The terminal is busy while it's open.
+
+**What I practised:** I broke `.todo-list` into `.todo-lists` on purpose. UI mode showed:
+- **Received: 0**, so nothing was at that address.
+- The step **waited about 5 seconds** and then failed.
+
+👉 **Rule:** A step that **waited about 5 seconds and then failed** usually means **"element not found"**. Check the locator for a typo or the wrong name.
+
+**My debugging loop:** run in `--ui`, click the test, check the actions and the snapshots, see whether it did what I told it to, adjust, save and re-run.
+
+---
+
 *My rule: if I can't explain every line, I don't truly know it.*

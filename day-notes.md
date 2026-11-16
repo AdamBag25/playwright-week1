@@ -284,4 +284,50 @@ describe {                 ← big box (the folder)
 
 ---
 
+## Day 8: Checkboxes and strict mode
+
+**Big idea:** Tick a checkbox, then check that it's ticked.
+
+| Code | Plain English |
+|---|---|
+| `.check()` | Tick this checkbox |
+| `toBeChecked()` | Check that the box **is** ticked |
+
+```typescript
+  // inside the TodoMVC folder in day07.spec.ts, so no goto needed (beforeEach does it)
+  test('double check for tick boxes', async ({ page }) => {
+    const newTodo = page.getByPlaceholder('what needs to be done?');
+    await newTodo.fill('buy milk');
+    await newTodo.press('Enter');
+    await page.locator('.todo-list').getByRole('checkbox').check();
+    await expect(page.locator('.todo-list').getByRole('checkbox')).toBeChecked();
+  });
+```
+
+**The error I hit: strict mode violation**
+```
+strict mode violation: getByRole('checkbox') resolved to 2 elements
+```
+There are **2 checkboxes** on the page:
+1. **The ❯ arrow** at the top means "tick ALL to-dos at once" (outside the list).
+2. **The circle** next to my to-do means "tick THIS to-do" (inside the list). ← the one I wanted
+
+👉 **Strict mode rule:** an **action** (click, fill, check) needs **exactly ONE** target. If a locator matches 2 or more things, Playwright **refuses to guess**.
+👉 **Cups analogy:** "Hand me the cup", but there are 2 cups, so a careful person asks "which one?"
+
+**The fix: say where to look**
+```
+page.locator('.todo-list').getByRole('checkbox')
+      inside the list       →    the checkbox
+```
+This is **locator chaining**: first narrow to the box, then find the thing inside it. It's the same "too broad, so narrow it" idea as Day 5.
+
+**Typing slips I made (my classic ones!):**
+- `test('name'), async` has an **early `)`**. It should be `test('name', async ...`, with the name and steps inside **one** pair of brackets.
+- `getByplaceholder` should be `getByPlaceholder`. **Capitals matter.**
+- `await newTodo = page...` mixed up saving and doing. Use `const name =` only to **create** a variable.
+- A test must end with `});`. If it's missing, the error points **just after** the real problem, so look a few lines **above** the arrow.
+
+---
+
 *My rule: if I can't explain every line, I don't truly know it.*

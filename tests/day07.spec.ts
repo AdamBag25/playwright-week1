@@ -20,6 +20,13 @@ test.describe('TodoMVC', () => {                               //← NEW: open t
     await newTodo.fill('buy eggs');                            //│
     await newTodo.press('Enter');                              //│
     await expect(page.locator('.todo-list li')).toHaveCount(2);//│
-  });                                                          //┘
+  });
+  test('double check for tick boxes', async ({page}) => {
+    const newTodo = page.getByPlaceholder('what needs to be done?');
+    await newTodo.fill('buy milk');
+    await newTodo.press('Enter');
+    await page.locator('.todo-list').getByRole('checkbox').check();
+    await expect(page.locator('.todo-list').getByRole('checkbox')).toBeChecked();
+    });                                                         //┘
 
 });                                                           //← NEW: close the folder

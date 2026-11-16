@@ -224,4 +224,64 @@ npx playwright test --ui
 
 ---
 
+## Day 7: Grouping tests (`describe` + `beforeEach`)
+
+**Big idea:** When every test starts with the same step, write that step **once** for the whole group.
+👉 **Nurse analogy:** A nurse washes their hands before **every** patient. It's a rule for the whole ward, not something written in each patient's notes.
+
+| Code | Plain English |
+|---|---|
+| `test.describe('TodoMVC', () => { ... })` | A **folder** that groups related tests |
+| `test.beforeEach(async ({ page }) => { ... })` | Steps that run **before every test** in the folder |
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test.describe('TodoMVC', () => {                 // open the folder
+
+  test.beforeEach(async ({ page }) => {          // before EVERY test...
+    await page.goto('https://demo.playwright.dev/todomvc');  // ...open the site
+  });
+
+  test('can add a to-do with variables', async ({ page }) => {
+    const newTodo = page.getByPlaceholder('what needs to be done?');
+    await newTodo.fill('buy milk');
+    await newTodo.press('Enter');
+    await expect(page.getByText('buy milk')).toBeVisible();
+  });
+
+  test('can add multiple to-dos', async ({ page }) => {
+    const newTodo = page.getByPlaceholder('what needs to be done?');
+    await newTodo.fill('buy bread');
+    await newTodo.press('Enter');
+    await newTodo.fill('buy eggs');
+    await newTodo.press('Enter');
+    await expect(page.locator('.todo-list li')).toHaveCount(2);
+  });
+
+});                                              // close the folder LAST
+```
+
+**How the braces nest, like boxes inside a box:**
+```
+describe {                 ← big box (the folder)
+   beforeEach { goto }     ← small box
+   test 1 { steps }        ← small box
+   test 2 { steps }        ← small box
+}                          ← big box closes LAST
+```
+
+**Why `beforeEach` is better than `goto` in every test:**
+1. **One place to change.** If the URL changes, I fix one line.
+2. **Can't forget it.** A new test automatically gets the setup.
+3. **Shorter tests.** Each test only shows what's special about it.
+
+👉 **DRY = "Don't Repeat Yourself".** It's the same idea as Day 5 variables: write it once, reuse it.
+
+**Errors I hit:**
+- **SyntaxError: Unexpected character '┐'** means the grammar is broken, so the code can't even start. The `(9:63)` means line 9, character 63.
+- **`//` makes a comment:** a note the computer ignores. It's useful for my own reminders.
+
+---
+
 *My rule: if I can't explain every line, I don't truly know it.*

@@ -330,4 +330,35 @@ This is **locator chaining**: first narrow to the box, then find the thing insid
 
 ---
 
+## Day 9: Checking that something is NOT there
+
+**Big idea:** Sometimes I need to prove something is **gone**. Add **`.not`** in front of the check.
+```
+await expect(something).toBeVisible();       // it IS visible
+await expect(something).not.toBeVisible();   // it is NOT visible
+```
+
+**Understand the app first:** **"Active"** shows only to-dos that are **not done yet**. Completed ones are **hidden**. 👉 *I can't test what I don't understand*, so I try it by hand first.
+
+```typescript
+  // inside the TodoMVC folder in day07.spec.ts
+  test('completed to-do is hidden under Active', async ({ page }) => {
+    const newTodo = page.getByPlaceholder('what needs to be done?');
+    await newTodo.fill('walk the dog');
+    await newTodo.press('Enter');
+    await expect(page.getByText('walk the dog')).toBeVisible();      // guard: prove it's there first
+    await page.locator('.todo-list').getByRole('checkbox').check();
+    await page.getByRole('link', { name: 'Active' }).click();
+    await expect(page.getByText('walk the dog')).not.toBeVisible();  // now prove it's gone
+  });
+```
+
+**⚠️ The trap with `.not`:** If I make a typo, like `getByText('walk the dgo')`, the test **still passes**, because something that never existed is "not visible" too. **The test lies.** It's green, but it proved nothing.
+
+👉 **The fix (a senior habit):** First prove the thing **IS** visible, **then** prove it's gone. If the "is visible" check passes, I know I'm looking at the right thing.
+
+**Counting results:** 4 tests × 3 browsers = **12**.
+
+---
+
 *My rule: if I can't explain every line, I don't truly know it.*

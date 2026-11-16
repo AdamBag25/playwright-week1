@@ -27,6 +27,15 @@ test.describe('TodoMVC', () => {                               //← NEW: open t
     await newTodo.press('Enter');
     await page.locator('.todo-list').getByRole('checkbox').check();
     await expect(page.locator('.todo-list').getByRole('checkbox')).toBeChecked();
-    });                                                         //┘
+    });   
+      
+    test('completed to-do is hidden under Active', async ({ page }) => {
+    const newTodo = page.getByPlaceholder('what needs to be done?');
+    await newTodo.fill('walk the dog');
+    await newTodo.press('Enter');
+    await page.locator('.todo-list').getByRole('checkbox').check();
+    await page.getByRole('link', { name: 'Active' }).click();
+    await expect(page.getByText('walk the dog')).not.toBeVisible();
+  });                                                      //┘
 
 });                                                           //← NEW: close the folder
